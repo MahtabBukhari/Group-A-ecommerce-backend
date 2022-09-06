@@ -6,7 +6,7 @@ const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncError = require('../middleware/catchAsyncError')
 
 // CREATE PRODUCT --- ADMIN
-exports.createProduct =  catchAsyncError(async (req, res, next) => {
+exports.createProduct =  catchAsyncError( async (req, res, next) => {
   const createdProduct = await product.create(req.body);
   res.status(201).json({
     success: true,

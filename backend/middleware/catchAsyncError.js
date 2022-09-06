@@ -1,4 +1,5 @@
 
+
 module.exports = controllerFunc =>(req,res,next)=>{
 
     // handle try catch error in external file
