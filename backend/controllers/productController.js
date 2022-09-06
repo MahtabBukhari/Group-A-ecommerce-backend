@@ -1,11 +1,12 @@
 //In controller we define the functions of routes
 
 const product = require("../models/productModel");
+
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncError = require('../middleware/catchAsyncError')
 
 // CREATE PRODUCT --- ADMIN
-exports.createProduct = catchAsyncError(async (req, res, next) => {
+exports.createProduct =  catchAsyncError(async (req, res, next) => {
   const createdProduct = await product.create(req.body);
   res.status(201).json({
     success: true,
@@ -14,18 +15,18 @@ exports.createProduct = catchAsyncError(async (req, res, next) => {
 })
 
 //GET ALL PRODUCTS
-exports.getAllProducts =catchAsyncError( async (req, res) => {
+exports.getAllProducts = catchAsyncError( async (req, res) => {
   const getProducts = await product.find();
   res.status(200).json({ success: true, getProducts });
 }
 )
 //update the product  -- admin
 
-exports.updateProduct =catchAsyncError( async (req, res, next) => {
+exports.updateProduct = catchAsyncError( async (req, res, next) => {
   let updateproduct = await product.findById(req.params.id);
 
   if (!updateproduct) {
-    return next(new ErrorHandler("Product Not Found", 404))
+    return  next(new ErrorHandler("Product Not Found", 404))
     // return res.status(500).json({
     //   success: false,
     //   message: "product not found",
@@ -48,7 +49,7 @@ exports.deleteProduct =catchAsyncError( async (req, res,next) => {
   
       
         if (!deletedProduct) {
-          return next(new ErrorHandler("Product Not Found", 404))
+          return  next(new ErrorHandler("Product Not Found", 404))
           // return res.status(500).json({
           //   success: false,
           //   message: "product not found",
@@ -69,7 +70,7 @@ exports.getProductDetails=catchAsyncError(async(req,res,next)=>{
   
   if(!getOneProduct){
     //next is a callback function that is used to call the middleware
-    return next(new ErrorHandler("Product Not Found", 404))
+    return  next(new ErrorHandler("Product Not Found", 404))
     // return res.status(500).json({
     //   success:false,
     //   message:"Product Not Found"

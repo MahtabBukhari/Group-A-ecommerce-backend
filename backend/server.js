@@ -3,6 +3,7 @@ const app = require('./app');
 const dotenv = require('dotenv');
 const connectDatabase = require('./config/database')
 
+
 // handle uncatch exception 
 // it define at start if error accure in below it will handle it
 
@@ -23,6 +24,7 @@ connectDatabase();
 const server= app.listen(process.env.PORT,()=>{
     console.log(`server is running on http://localhost:${process.env.PORT}`)
 })
+
 
 
 // always in last section define it
