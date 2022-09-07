@@ -1,6 +1,7 @@
 class ApiFeatures {
   constructor(query, queryStr) {
-    (this.query = query), (this.queryStr = queryStr); // query string is portion of url after ? like  ?keyword=samosa
+    this.query = query,
+     this.queryStr = queryStr; // query string is portion of url after ? like  ?keyword=samosa
   }
 
   search() {
@@ -15,7 +16,7 @@ class ApiFeatures {
 
     // keyword = name:samosa
     // console.log(keyword)
-    this.query = this.query.find({ ...keyword });
+    this.query = this.query.find({ ...keyword });//like product.find({name:"productName"})
     return this;
   }
 
