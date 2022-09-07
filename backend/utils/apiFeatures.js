@@ -20,7 +20,7 @@ class ApiFeatures{
     }
 
     filter(){// filter category by ignore others and only category left
-        const queryCopy = {...this.queryStr}
+        const queryCopy = {...this.queryStr}// destructure for with out refrence get quryStr 
 
        const removeFields = ["keyword","page","limit"]
 
@@ -30,13 +30,23 @@ class ApiFeatures{
         // above filter comes from font end price[gt] but it need $ sign with it so we put it as
 // first convert object to string
         let queryStr = JSON.stringify(queryCopy)
-        console.log(queryStr)
+        // console.log(queryStr)
        queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, key=> `$${key}`)
                           // above is reqular expression
-        console.log(queryStr)
+        // console.log(queryStr)
         this.query=this.query.find(JSON.parse(queryStr))
        
         return this
+    }
+
+    pagination(contentPerPage){
+        let currentPage = this.queryStr.page || 1
+
+        let skip = contentPerPage * (currentPage - 1)
+
+        this.query = this.query.limit(contentPerPage).skip(skip)
+        return this
+
     }
 }
 
