@@ -1,5 +1,8 @@
 const mongoose = require('mongoose');
-const validator = require('validator')
+const validator = require('validator');
+const bcrypt = require('bcryptjs')
+
+
 
 
 const userSchema = new mongoose.Schema({
@@ -41,6 +44,14 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpire:Date
 })
 
-
+userSchema.pre("save", async function(next){
+    //if user update the profile user will change only name email avatar not password because we set separate option to change password
+    // if user change only profile without changing the password the already existing password bcrypt again that is issue so resolve it as
+    
+    if(!this.isModified('password')){  // mean if password not change it moves to next not encrypt password again
+        next()
+     }
+    this.password =await bcrypt.hash(this.password,10) // bcrypt.hash(password, salt)
+})
 
 module.exports= mongoose.model("User",userSchema);
