@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
 
 
 
@@ -53,5 +54,14 @@ userSchema.pre("save", async function(next){
      }
     this.password =await bcrypt.hash(this.password,10) // bcrypt.hash(password, salt)
 })
+// when user signup then user must login automatechly mean user has not to sign in for this we generate token using (id) of the user
+
+userSchema.methods.getJWTToken = function(){
+
+   return jwt.sign({id:this._id},process.env.JWT_SECRET,{expiresIn:process.env.JWT_EXPIRE})
+
+
+}
+
 
 module.exports= mongoose.model("User",userSchema);

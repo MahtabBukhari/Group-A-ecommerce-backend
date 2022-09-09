@@ -9,7 +9,7 @@ exports.registerUser=catchAsyncError(async(req,res,next)=>{
         public_id:"public_id",
         url:"urlavatar"
     }})
+const token = createUser.getJWTToken()
 
-
-    res.status(201).json({success:true,createUser})
+    res.status(201).json({success:true,token})
 })
