@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const ErrorHandler = require("../utils/errorHandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const { findOne } = require("../models/userModel");
 
 
 exports.registerUser=catchAsyncError(async(req,res,next)=>{
@@ -12,4 +13,30 @@ exports.registerUser=catchAsyncError(async(req,res,next)=>{
 const token = createUser.getJWTToken()
 
     res.status(201).json({success:true,token})
+})
+
+exports.loginUser= catchAsyncError(async (req,res,next)=>{
+    const {email,password}=req.body;
+// if email or password not enters
+    if(!email || ! password){
+        return next(new ErrorHandler("Please Enter Email or Password",400))
+    }
+
+    const userLogin = await User.findOne({email:email}).select("+password")
+
+    //if user not exist mean email not exist
+    if(!userLogin){
+        return next(new ErrorHandler("Invalid email or password",401))
+    }
+
+    const isPasswordMatch =await userLogin.comparePassword(password)
+
+    //if password is not match then
+    if(!isPasswordMatch){
+        return next(new ErrorHandler("Invalid email or password",401))
+    }
+
+const token  = userLogin.getJWTToken()
+    res.status(201).json({success:true,token})
+
 })
