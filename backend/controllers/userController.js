@@ -25,7 +25,7 @@ exports.loginUser= catchAsyncError(async (req,res,next)=>{
         return next(new ErrorHandler("Please Enter Email or Password",400))
     }
 
-    const userLogin = await User.findOne({email:email}).select("+password")
+    const userLogin = await User.findOne({email}).select("+password")
 
     //if user not exist mean email not exist
     if(!userLogin){
@@ -41,7 +41,10 @@ exports.loginUser= catchAsyncError(async (req,res,next)=>{
 
 // const token  = userLogin.getJWTToken()
 //     res.status(201).json({success:true,token})
+ 
 
-sendToken(userLogin,200,res)
+    sendToken(userLogin,200,res)
+
+    
 
 })
