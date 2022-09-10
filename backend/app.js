@@ -7,6 +7,7 @@ const cookieParser = require('cookie-parser')
 const app = express()
 
 app.use(express.json())
+// for useing cookie use it must
 app.use(cookieParser());
 
 // api routes
