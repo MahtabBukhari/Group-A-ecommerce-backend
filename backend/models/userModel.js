@@ -3,6 +3,8 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
+const crypto = require("crypto")
+
 
 
 
@@ -67,6 +69,26 @@ userSchema.methods.getJWTToken = function(){
 userSchema.methods.comparePassword =async function(enterpassword){
 
     return await bcrypt.compare(enterpassword,this.password)
+}
+
+// generate reset password token
+
+userSchema.methods.getResetPasswordToken= function(){
+
+
+    // Genetrate reset Token
+
+    const resetToken = crypto.randomBytes(20).toString("hex");
+
+    //to more strong token use (sha256) algorithem
+
+    this.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex")
+
+    this.resetPasswordExpire = Date.now() + 15*60*1000;
+
+    return resetToken;
+
+
 }
 
 
