@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
 const { findById } = require("../models/userModel");
+const { runInThisContext } = require("vm");
 
 exports.registerUser = catchAsyncError(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -180,4 +181,70 @@ exports.updateUserProfile = catchAsyncError( async(req,res,next)=>{
 
   await user.save()
   res.status(200).json({success:true})
+})
+
+/////////////////////////////////////////////////////
+//Get all users(admin)
+
+exports.getAllUser= catchAsyncError(async(req,res,next)=>{
+
+  const users = await User.find();
+
+  res.status(200).json({
+    success:true,
+    users
+  })
+
+})
+
+
+// Get Single user (admin)
+
+exports.getSingleUser= catchAsyncError(async (req,res,next)=>{
+  const user = await User.findById(req.params.id);
+
+  if(!user){
+    return next( new ErrorHandler(`User not exist with id: ${req.params.id}`,400))
+  }
+
+  res.status(200).json({
+    success:true,
+    user
+  })
+
+})
+
+
+exports.updateUserRole = catchAsyncError( async(req,res,next)=>{
+  
+  const updateRole ={
+    name:req.body.name,
+    email:req.body.email,
+    role:req.body.role
+  }
+
+  const user = await User.findByIdAndUpdate(req.params.id,updateRole,{new:true,runValidators:true})
+  if(!user){
+    return next(new ErrorHandler(`User does not exist with that id: ${req.params.id}`,400))
+  }
+
+  res.status(200).json({
+    success:true,
+  })
+})
+
+
+
+//Delete user ---Admin
+
+exports.deleteUser= catchAsyncError( async(req,res,next)=>{
+  const user = await User.findByIdAndRemove(req.params.id);
+
+  if(!user){
+    return next(new ErrorHandler(`User does not exist with that id: ${req.params.id}`,400))
+  }
+
+  res.status(200).json({
+    success:true,
+  })
 })
