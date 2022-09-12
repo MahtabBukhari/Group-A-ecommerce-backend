@@ -4,6 +4,7 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const crypto = require("crypto");
 const sendToken = require("../utils/jwtToken");
 const sendEmail = require("../utils/sendEmail");
+const { findById } = require("../models/userModel");
 
 exports.registerUser = catchAsyncError(async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -142,4 +143,24 @@ exports.getUserDetails = catchAsyncError( async(req,res,next)=>{
     success:true,
     user
   })
+})
+
+exports.updatePassword = catchAsyncError( async(req,res,next)=>{
+  const user = await User.findById(req.user.id).select('+password')
+
+  const isPasswordMatch = await user.comparePassword(req.body.oldPassword)
+
+if(!isPasswordMatch){
+  return next(new ErrorHandler("Old password is incorrect"),400)
+}
+
+if(req.body.newPassword!==req.body.confirmPassword){
+  return next(new ErrorHandler("Password and confirmPassword does not match"),400)
+}
+
+user.password = req.body.newPassword;
+await user.save()
+
+sendToken(user,200,res)
+
 })
