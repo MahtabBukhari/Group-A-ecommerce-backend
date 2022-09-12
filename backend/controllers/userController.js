@@ -145,6 +145,7 @@ exports.getUserDetails = catchAsyncError( async(req,res,next)=>{
   })
 })
 
+
 exports.updatePassword = catchAsyncError( async(req,res,next)=>{
   const user = await User.findById(req.user.id).select('+password')
 
@@ -163,4 +164,20 @@ await user.save()
 
 sendToken(user,200,res)
 
+})
+
+
+
+//update user profile
+
+exports.updateUserProfile = catchAsyncError( async(req,res,next)=>{
+  const updateProfile = {
+    name:req.body.name,
+    email:req.body.email
+  }
+
+  const user = await User.findByIdAndUpdate(req.user.id,updateProfile,{runValidators:true,new:true})
+
+  await user.save()
+  res.status(200).json({success:true})
 })
