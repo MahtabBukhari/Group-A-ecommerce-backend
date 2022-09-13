@@ -169,3 +169,38 @@ exports.getAllReviews= catchAsyncError( async(req,res,next)=>{
   })
 })
 
+
+
+//Delete Reviews
+
+exports.deleteReview= catchAsyncError( async(req,res,next)=>{
+
+  //product id will be pass by url
+  const Product = await product.findById(req.query.productId);
+
+  //we will store all reviews in below reviews axcept the review that is deleted
+  const reviews = Product.reviews.filter(rev=> rev._id.toString()!== req.query.reviewId);
+
+
+  let avg=0
+  reviews.forEach(rev=>{
+
+    avg+= rev.rating
+
+  })
+
+  const ratings = avg/(reviews.length);
+
+  const numOfReviews = reviews.length
+
+  await product.findByIdAndUpdate(req.query.productId,{reviews,ratings,numOfReviews},{new:true,runValidators:true})
+
+
+
+
+  res.status(200).json({
+    success:true,
+    message:"review is deleted successfully"
+  })
+
+})
