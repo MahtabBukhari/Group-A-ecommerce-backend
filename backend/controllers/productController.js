@@ -92,3 +92,61 @@ exports.getProductDetails = catchAsyncError(async (req, res, next) => {
     productCount
   });
 });
+
+
+//Create New reviews or update reviews
+
+exports.createProductReviews= catchAsyncError( async (req,res,next)=>{
+
+  // from front end productId comes which tell us to which product user is commenting
+  const {rating,comment,productId}= req.body;
+// if we login then our req.user exist
+  const review={
+    user:req.user._id,
+    name:req.user.name,
+    rating:Number(rating),
+    comment
+  }
+
+  const Reviewedproduct = await product.findById(productId)
+
+  // now check is that user allready give review to that product or not
+  const isReviewed = Reviewedproduct.reviews.find(rev=> rev.user.toString()=== req.user._id.toString())
+
+  if(isReviewed){
+
+    // this loop will check all reviews user
+    Reviewedproduct.reviews.forEach(rev=>{
+      if(rev.user.toString()=== req.user._id.toString()){
+
+        rev.rating=Number(rating)
+        rev.comment=comment
+
+
+      }
+    })
+
+  }else{
+//if that user is not reviewed this product before then simply user review push to the reviews array
+    Reviewedproduct.reviews.push(review)
+    //as review is in the form of array so array length show how many review given by users to that product
+    Reviewedproduct.numOfReviews= Reviewedproduct.reviews.length
+
+  }
+
+  // here we will add all reviews rating of that product
+  let avg=0
+  Reviewedproduct.reviews.forEach(rev=>{
+    avg+=rev.rating
+  })
+
+  //here we will store in ratings   the avarage of all rating given to that product
+  Reviewedproduct.ratings = avg/ (Reviewedproduct.numOfReviews)
+
+  await Reviewedproduct.save({validateBeforeSave:false})
+
+  res.status(200).json({
+    success:true
+  })
+
+})

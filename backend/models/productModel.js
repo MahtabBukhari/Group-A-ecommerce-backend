@@ -20,7 +20,7 @@ price:{
     maxLength:[8,"price can not exceed from 8 characters"]
 },
 
-rating:{
+ratings:{
     type:Number,
     default:0
 },
@@ -52,6 +52,11 @@ numOfReviews:{
 },
 
 reviews:[{
+    user:{
+        type:mongoose.Schema.ObjectId,
+        ref:"User",
+        required:true
+    },
     name:{
         type:String,
         required:true
