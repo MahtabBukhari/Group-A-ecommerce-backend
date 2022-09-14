@@ -88,3 +88,49 @@ exports.myOrders = catchAsyncError( async( req, res, next)=>{
     orders
    })
  })
+
+
+ //Update order status  --Admin
+
+ exports.updateOrder = catchAsyncError( async(req, res ,next)=>{
+
+const order = await Order.findById(req.params.id)
+
+if(!order){
+  return next(new ErrorHandler("Order Not Found",404))
+}
+
+if(order.orderStatus==="Delivered"){
+  return next( new ErrorHandler("Order is already delivered",400))
+}
+
+// change order status from proceeding to Delivered by admin
+order.orderStatus= req.body.status;
+
+if(req.body.status==="Delivered"){
+
+  // this loop will execute for each item of the orderItems
+  order.orderItems.forEach(async(item)=>{
+
+    await updateStock(item.product, item.quantity)
+
+  })
+
+  order.deliveredAt=Date.now()
+}
+
+await order.save({validateBeforeSave:false})
+res.status(200).json({
+  success:true
+})
+
+ })
+
+
+async function  updateStock(id,quantity){
+
+  const Product = await product.findById(id);
+
+  Product.stock-=quantity
+  await Product.save({validateBeforeSave:false})
+ }
