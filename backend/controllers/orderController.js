@@ -54,6 +54,7 @@ exports.getSingleOrder = catchAsyncError( async(req,res,next)=>{
 
 exports.myOrders = catchAsyncError( async( req, res, next)=>{
 
+  // find all order that are placed by that user id
   const orders = await Order.find({user:req.user.id})
 
   if(!orders){
@@ -67,7 +68,7 @@ exports.myOrders = catchAsyncError( async( req, res, next)=>{
 })
 
 
-// get all orders details
+// get all orders details --Admin
 
  exports.getAllOrders = catchAsyncError( async(req, res, next)=>{
    const orders = await Order.find();
